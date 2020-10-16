@@ -12,6 +12,7 @@ use App\Customer;
 use App\Coupon;
 use App\Product;
 use PDF;
+use Mail;
 
 class OrderController extends Controller
 {
@@ -246,7 +247,19 @@ class OrderController extends Controller
 
 		';
 
+            $to_name = $shipping->shipping_name;
+                $to_email = $shipping->shipping_email;//send to this email
+               
+             
+                $data = array("name"=>"Mail từ tài khoản Khách hàng","body"=>'https://localhost:81/shopbanhanglaravel/print-order/'.$checkout_code); //body of mail.blade.php
+                
+                Mail::send('admin.send',$data,function($message) use ($to_name,$to_email){
 
+                    $message->to($to_email)->subject('Gửi mail đơn hàng cho khách');//send this mail with subject
+                    $message->from($to_email,$to_name);//send from this mail
+                });
+                return redirect('/')->with('message','gửi mail thành  công');
+        
 		return $output;
 
 	}
